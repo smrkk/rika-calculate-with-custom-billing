@@ -7,7 +7,11 @@ const TARIFFS = {
   businessZone4: { base: 5860, step: 650 },
   individualZone4: { base: 5860, step: 650 },
   cityKg: { base: 2100, step: 520 },
-  cityBusinessKv: { base: 1660, step: 520 }
+  cityBusinessKv: { base: 1660, step: 520 },
+  businessZone3_3: { base: 3010, step: 400 },
+  businessZone4_4: { base: 5200, step: 550 },
+  tsoy: { base: 2450, step: 400 },
+  cityTsoy: { base: 1600, step: 400 }
 };
 
 const form = document.getElementById("delivery-form");
@@ -17,6 +21,9 @@ const resultsEl = document.getElementById("results");
 const actualWeightEl = document.getElementById("actual-weight");
 const dimWeightEl = document.getElementById("dim-weight");
 const usedWeightEl = document.getElementById("used-weight");
+const priceEconomyIndividualEl = document.getElementById("price-economy-individual");
+const priceEconomyLegalEl = document.getElementById("price-economy-legal");
+const priceEconomyTsoyEl = document.getElementById("price-economy-tsoy");
 
 const priceOfficeOfficeEl = document.getElementById("price-office-office");
 const priceOfficeAddressEl = document.getElementById("price-office-address");
@@ -34,6 +41,11 @@ const urgentInput = document.getElementById("service-urgent");
 const personalInput = document.getElementById("service-personal");
 const extraPackagingInput = document.getElementById("service-extra-packaging");
 const timeTenderInput = document.getElementById("service-time-tender");
+
+const priceTsoyEl = document.getElementById("price-tsoy");
+const priceTsoyZone3El = document.getElementById("price-business-zone3_3");
+const priceTsoyZone4El = document.getElementById("price-business-zone4_4");
+const priceCityTsoyEl = document.getElementById("price-city-tsoy");
 
 const inputIds = ["weight", "length", "width", "height"];
 const inputElements = inputIds.map((id) => document.getElementById(id));
@@ -124,6 +136,26 @@ function calculateRailPrice(weight) {
   }
 
   return "custom pricing";
+}
+
+function calculateEconomyPrice(weight) {
+  if (weight <= 5) {
+    return 4000;
+  }
+
+  if (weight <= 10) {
+    return 5000;
+  }
+
+  if (weight <= 20) {
+    return 6000;
+  }
+
+  if (weight <= 30) {
+    return 7500;
+  }
+
+  return 7500 + Math.ceil(weight - 30) * 310;
 }
 
 function calculateServicesSurcharge(usedWeight) {
@@ -258,6 +290,26 @@ form.addEventListener("submit", (event) => {
   const railBasePrice = calculateRailPrice(roundedUsedWeight);
   const railPrice =
     typeof railBasePrice === "number" ? railBasePrice + servicesSurcharge : railBasePrice;
+  const economyPrice = calculateEconomyPrice(roundedUsedWeight) + servicesSurcharge;
+
+  const tsoyPrice =
+    calculateDeliveryPrice(roundedUsedWeight, TARIFFS.tsoy.base, TARIFFS.tsoy.step) +
+    servicesSurcharge;
+  const tsoyZone3Price =
+    calculateDeliveryPrice(
+      roundedUsedWeight,
+      TARIFFS.businessZone3_3.base,
+      TARIFFS.businessZone3_3.step
+    ) + servicesSurcharge;
+  const tsoyZone4Price =
+    calculateDeliveryPrice(
+      roundedUsedWeight,
+      TARIFFS.businessZone4_4.base,
+      TARIFFS.businessZone4_4.step
+    ) + servicesSurcharge;
+  const cityTsoyPrice =
+    calculateDeliveryPrice(roundedUsedWeight, TARIFFS.cityTsoy.base, TARIFFS.cityTsoy.step) +
+    servicesSurcharge;
 
   actualWeightEl.textContent = `${formatNumber(actualWeight)} кг`;
   dimWeightEl.textContent = `${formatNumber(dimensionalWeight)} кг`;
@@ -274,6 +326,14 @@ form.addEventListener("submit", (event) => {
   priceCityBusinessKvEl.textContent = `${formatTenge(cityBusinessKvPrice)} ₸`;
   priceRailEl.textContent =
     typeof railPrice === "number" ? `${formatTenge(railPrice)} ₸` : railPrice;
+  priceEconomyIndividualEl.textContent = `${formatTenge(economyPrice)} ₸`;
+  priceEconomyLegalEl.textContent = `${formatTenge(economyPrice)} ₸`;
+  priceEconomyTsoyEl.textContent = `${formatTenge(economyPrice)} ₸`;
+
+  priceTsoyEl.textContent = `${formatTenge(tsoyPrice)} ₸`;
+  priceTsoyZone3El.textContent = `${formatTenge(tsoyZone3Price)} ₸`;
+  priceTsoyZone4El.textContent = `${formatTenge(tsoyZone4Price)} ₸`;
+  priceCityTsoyEl.textContent = `${formatTenge(cityTsoyPrice)} ₸`;
 
   resultsEl.classList.remove("hidden");
 });
