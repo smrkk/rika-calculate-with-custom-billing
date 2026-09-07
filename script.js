@@ -139,23 +139,26 @@ function calculateRailPrice(weight) {
 }
 
 function calculateEconomyPrice(weight) {
+  let price;
+
   if (weight <= 5) {
-    return 4000;
+    price = 4000;
+  } else if (weight <= 10) {
+    price = 5000;
+  } else if (weight <= 20) {
+    price = 6000;
+  } else if (weight <= 30) {
+    price = 7500;
+  } else {
+    price = 7500 + Math.ceil(weight - 30) * 310;
   }
 
-  if (weight <= 10) {
-    return 5000;
+  // Если вес больше 50 кг — увеличиваем только тариф Economy на 25%
+  if (weight > 50) {
+    price *= 1.25;
   }
 
-  if (weight <= 20) {
-    return 6000;
-  }
-
-  if (weight <= 30) {
-    return 7500;
-  }
-
-  return 7500 + Math.ceil(weight - 30) * 310;
+  return price;
 }
 
 function calculateServicesSurcharge(usedWeight) {
