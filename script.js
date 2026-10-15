@@ -3,7 +3,7 @@ const TARIFFS = {
   officeAddress: { base: 2900, step: 520 },
   addressAddress: { base: 3350, step: 520 },
   business: { base: 2900, step: 520 },
-  businessZone3: { base: 3250, step: 520 },
+  businessZone3: { base: 3350, step: 520 },
   businessZone4: { base: 5860, step: 650 },
   individualZone4: { base: 5860, step: 650 },
   cityKg: { base: 2100, step: 520 },
